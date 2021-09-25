@@ -25,8 +25,12 @@ func ConvInputToIntegers(input string) ([]int, error) {
 	return integers, nil
 }
 
+func SplitInputByString(input string, splitter string) []string {
+	return strings.Split(strings.TrimSpace(input), splitter)
+}
+
 func SplitInputByLine(input string) []string {
-	return strings.Split(strings.TrimSpace(input), "\n")
+	return SplitInputByString(input, "\n")
 }
 
 func FirstRune(str string) (r rune) {
