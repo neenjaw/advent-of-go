@@ -20,3 +20,10 @@ func MaxByIntValue(values []int) (int, int) {
 	}
 	return maxIndex, maxValue
 }
+
+func Sum(values []int) (sum int) {
+	for _, v := range values {
+		sum += v
+	}
+	return
+}
