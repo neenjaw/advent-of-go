@@ -72,7 +72,7 @@ func main() {
 }
 
 func countPathsToGoldBag(rules Rules) (count int) {
-	for bag, _ := range rules {
+	for bag := range rules {
 		if bag == ShinyGoldBag {
 			continue
 		}
