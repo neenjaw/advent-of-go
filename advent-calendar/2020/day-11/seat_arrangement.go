@@ -1,5 +1,7 @@
 package main
 
+import "advent-of-go/util/grid"
+
 type Space int
 
 const (
@@ -33,17 +35,12 @@ func ConvInputToSeatingArrangement(input []string) (arr Arrangement) {
 	return
 }
 
-type Coordinate struct {
-	x int
-	y int
+func slopes() []grid.Point {
+	return []grid.Point{{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}}
 }
 
-func slopes() []Coordinate {
-	return []Coordinate{{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}}
-}
-
-func lookaroundSum(arr Arrangement, c Coordinate, limit bool) (sum int) {
-	var fx func(Arrangement, Coordinate, Coordinate) bool
+func lookaroundSum(arr Arrangement, c grid.Point, limit bool) (sum int) {
+	var fx func(Arrangement, grid.Point, grid.Point) bool
 	if limit {
 		fx = lookImmediate
 	} else {
@@ -59,44 +56,44 @@ func lookaroundSum(arr Arrangement, c Coordinate, limit bool) (sum int) {
 	return
 }
 
-func lookImmediate(arr Arrangement, slope Coordinate, c Coordinate) bool {
+func lookImmediate(arr Arrangement, slope grid.Point, c grid.Point) bool {
 	minY := 0
 	minX := 0
 	maxY := len(arr) - 1
 	maxX := len(arr[0]) - 1
-	c.x += slope.x
-	c.y += slope.y
+	c.X += slope.X
+	c.Y += slope.Y
 
-	if c.x < minX || c.x > maxX || c.y < minY || c.y > maxY {
+	if c.X < minX || c.X > maxX || c.Y < minY || c.Y > maxY {
 		return false
 	}
 
-	if arr[c.y][c.x] == OccupiedSeat {
+	if arr[c.Y][c.X] == OccupiedSeat {
 		return true
 	}
 
 	return false
 }
 
-func lookUnlimited(arr Arrangement, slope Coordinate, c Coordinate) bool {
+func lookUnlimited(arr Arrangement, slope grid.Point, c grid.Point) bool {
 	minY := 0
 	minX := 0
 	maxY := len(arr) - 1
 	maxX := len(arr[0]) - 1
 
 	for {
-		c.x += slope.x
-		c.y += slope.y
+		c.X += slope.X
+		c.Y += slope.Y
 
-		if c.x < minX || c.x > maxX || c.y < minY || c.y > maxY {
+		if c.X < minX || c.X > maxX || c.Y < minY || c.Y > maxY {
 			return false
 		}
 
-		if arr[c.y][c.x] == OccupiedSeat {
+		if arr[c.Y][c.X] == OccupiedSeat {
 			return true
 		}
 
-		if arr[c.y][c.x] == EmptySeat {
+		if arr[c.Y][c.X] == EmptySeat {
 			return false
 		}
 	}
@@ -119,7 +116,7 @@ func Step(arr Arrangement, config StepConfig) (next Arrangement, changed bool) {
 				continue
 			}
 
-			sum := lookaroundSum(arr, Coordinate{x, y}, config.limit)
+			sum := lookaroundSum(arr, grid.Point{x, y}, config.limit)
 
 			if spot == OccupiedSeat && sum >= config.emptyThreshold {
 				next[y][x] = EmptySeat
