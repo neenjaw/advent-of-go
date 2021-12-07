@@ -32,7 +32,7 @@ func main() {
 	}
 
 	answer1 := run(input, 80)
-	log.Printf("Example - Part 1: %v", answer1)
+	log.Printf("Part 1: %v", answer1)
 
 	answer2 := run(input, 256)
 	log.Printf("Part 2: %v", answer2)
