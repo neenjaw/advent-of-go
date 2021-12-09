@@ -1,6 +1,9 @@
 package enum
 
-import "math"
+import (
+	"errors"
+	"math"
+)
 
 func EveryString(slice []string, fn func(string) bool) bool {
 	result := true
@@ -26,4 +29,22 @@ func Sum(values []int) (sum int) {
 		sum += v
 	}
 	return
+}
+
+func ContainsInt(haystack []int, needle int) bool {
+	for _, item := range haystack {
+		if item == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func Find(haystack []string, compare func(needle string) bool) (string, error) {
+	for _, item := range haystack {
+		if compare(item) {
+			return item, nil
+		}
+	}
+	return "", errors.New("nothing found with comparator")
 }
