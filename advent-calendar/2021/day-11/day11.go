@@ -132,7 +132,6 @@ func run(lines []string, steps_to_take int) int {
 					fmt.Print(energy)
 					color.Unset()
 				} else {
-
 					fmt.Print(energy)
 				}
 			}
