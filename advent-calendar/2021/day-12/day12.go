@@ -10,7 +10,8 @@ import (
 
 func main() {
 	files := []string{"./example.txt", "./example2.txt", "./example3.txt", "./input.txt"}
-	expected := []int{10, 19, 226, 0}
+	expected := []int{10, 19, 226, 3576}
+	expected2 := []int{36, 103, 3509, 84271}
 	inputs := make([]string, 0)
 	for _, f := range files {
 		input, err := file.ReadFile(f)
@@ -23,12 +24,17 @@ func main() {
 
 	for i, input := range inputs {
 		fmt.Println(files[i])
-		ans := run(input)
+		ans, ans2 := run(input)
 		if ans != expected[i] {
-			fmt.Printf("Unexpected answer for '%s'. wanted: %v got: %v ", files[i], expected[i], ans)
+			fmt.Printf("Unexpected answer for pt1 '%s'. wanted: %v got: %v ", files[i], expected[i], ans)
+			return
+		}
+		if expected2[i] != -1 && ans2 != expected2[i] {
+			fmt.Printf("Unexpected answer for pt2 '%s'. wanted: %v got: %v\n", files[i], expected2[i], ans)
 			return
 		}
 		fmt.Println("==========", ans)
+		fmt.Println("==========", ans2)
 	}
 
 	// answer2 := run(inputLines)
@@ -55,7 +61,7 @@ type Connection struct {
 
 type Path []string
 
-func run(input string) int {
+func run(input string) (int, int) {
 	lines := conv.SplitInputByLine(input)
 
 	connections := map[Connection]bool{}
@@ -81,30 +87,39 @@ func run(input string) int {
 		}
 	}
 
-	fmt.Println(caves)
+	// fmt.Println(caves)
+	// fmt.Println("===============")
+	// fmt.Println(connections)
+	// fmt.Println("===============")
 
-	fmt.Println("===============")
-	fmt.Println(connections)
+	// for cave, neighours := range connectionIndex {
+	// 	fmt.Println(cave, (*neighours))
+	// }
 
-	fmt.Println("===============")
-
-	for cave, neighours := range connectionIndex {
-		fmt.Println(cave, (*neighours))
-	}
-
-	fmt.Println("===============")
+	// fmt.Println("===============")
 
 	return dfs(
-		caves,
-		connections,
-		connectionIndex,
-		"",
-		"start",
-		"end",
-		map[string]bool{},
-		[]string{},
-		0,
-	)
+			caves,
+			connections,
+			connectionIndex,
+			"",
+			"start",
+			"end",
+			map[string]bool{},
+			[]string{},
+			0,
+		), dfsVisitOneTwice(
+			caves,
+			connections,
+			connectionIndex,
+			"",
+			"start",
+			"end",
+			map[string]bool{},
+			[]string{},
+			0,
+			false,
+		)
 }
 
 func addCave(caves *map[string]CaveType, cave string) {
@@ -150,8 +165,8 @@ func dfs(
 	path = append(path, node)
 
 	if node == goal {
-		fmt.Print(strings.Repeat("  ", depth))
-		fmt.Printf(">>> goal path: %#v\n", path)
+		// fmt.Print(strings.Repeat("  ", depth))
+		// fmt.Printf(">>> goal path: %#v\n", path)
 		return 1
 	}
 
@@ -161,8 +176,8 @@ func dfs(
 
 	neighbors := connectionIndex[node]
 
-	fmt.Print(strings.Repeat("  ", depth))
-	fmt.Println(node, *neighbors, previous, visited)
+	// fmt.Print(strings.Repeat("  ", depth))
+	// fmt.Println(node, *neighbors, previous, visited)
 
 	goals := 0
 	for neighbor := range *neighbors {
@@ -180,6 +195,66 @@ func dfs(
 			visit_copy,
 			path,
 			depth+1,
+		)
+	}
+	return goals
+}
+
+func dfsVisitOneTwice(
+	caves map[string]CaveType,
+	connections map[Connection]bool,
+	connectionIndex map[string]*map[string]bool,
+	previous string,
+	node string,
+	goal string,
+	visited map[string]bool,
+	path []string,
+	depth int,
+	visited_twice bool,
+) int {
+	path = append(path, node)
+
+	if node == goal {
+		// fmt.Print(strings.Repeat("  ", depth))
+		// fmt.Printf(">>> goal path: %#v\n", path)
+		return 1
+	}
+
+	if caves[node] == Small {
+		visited[node] = true
+	}
+
+	neighbors := connectionIndex[node]
+
+	// fmt.Print(strings.Repeat("  ", depth))
+	// fmt.Println(node, *neighbors, previous, visited)
+
+	goals := 0
+	for neighbor := range *neighbors {
+		visit_copy := copyVisited(visited)
+
+		next_visit_twice := visited_twice
+
+		if caves[neighbor] == Small {
+			if visited[neighbor] && visited_twice {
+				continue
+			}
+			if visited[neighbor] && !visited_twice {
+				next_visit_twice = true
+			}
+		}
+
+		goals += dfsVisitOneTwice(
+			caves,
+			connections,
+			connectionIndex,
+			node,
+			neighbor,
+			goal,
+			visit_copy,
+			path,
+			depth+1,
+			next_visit_twice,
 		)
 	}
 	return goals
