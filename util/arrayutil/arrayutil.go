@@ -33,6 +33,14 @@ func SliceBuilder2DInt(i, j int) [][]int {
 	return slice
 }
 
+func SliceBuilder2DRune(i, j int) [][]rune {
+	var slice [][]rune = make([][]rune, i)
+	for x := range slice {
+		slice[x] = make([]rune, j)
+	}
+	return slice
+}
+
 func SPrintArrayYX(array interface{}, format string) string {
 	out := ""
 	switch arr := array.(type) {
