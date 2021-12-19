@@ -38,7 +38,7 @@ func main() {
 	for i, input := range inputs {
 		fmt.Println(files[i])
 
-		ans := run2(input)
+		ans := runAStar(input)
 		if ans != expected2[i] {
 			fmt.Printf("Unexpected answer for pt2 '%s'. wanted: %v got: %v ", files[i], expected2[i], ans)
 			return
@@ -67,6 +67,10 @@ func run2(input string) int {
 
 	initCosts := CostMap(make(map[Pos]int))
 	return dynamicMinCost(grid, Pos{len(grid)*5 - 1, len(grid[0])*5 - 1}, &initCosts)
+}
+
+func runAStar(input string) int {
+	return 0
 }
 
 // naive
