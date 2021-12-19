@@ -48,10 +48,10 @@ type Tile struct {
 var tileMap map[Pos]*Tile
 
 func (t *Tile) validPosition(p Pos) bool {
-	if p.y < 0 || p.y >= t.grid.virtualDimY || p.x < 0 || p.x >= t.grid.virtualDimX {
-		return false
-	}
-	return true
+	return !(p.y < 0 ||
+		p.y >= t.grid.virtualDimY ||
+		p.x < 0 ||
+		p.x >= t.grid.virtualDimX)
 }
 
 func (t *Tile) PathNeighbors() []astar.Pather {
@@ -82,7 +82,9 @@ func (t *Tile) PathNeighborCost(to astar.Pather) (cost float64) {
 
 func (t *Tile) PathEstimatedCost(to astar.Pather) float64 {
 	toTile := to.(*Tile)
-	return math.Abs(float64(toTile.position.x-t.position.x)) + math.Abs(float64(toTile.position.y-t.position.y))
+	x := math.Abs(float64(toTile.position.x - t.position.x))
+	y := math.Abs(float64(toTile.position.y - t.position.y))
+	return x + y
 }
 
 func main() {
@@ -126,9 +128,21 @@ func main() {
 func run(input string, mx, my int) float64 {
 	tileMap = make(map[Pos]*Tile)
 	costGrid := arrayutil.Dynamic2DIntSliceBuilder(input, "\n", "")
-	grid := Grid{grid: costGrid, dimX: len(costGrid[0]), dimY: len(costGrid), virtualDimX: len(costGrid[0]) * mx, virtualDimY: len(costGrid) * my}
-	start := Tile{position: Pos{0, 0}, grid: &grid}
-	end := Tile{position: Pos{y: grid.virtualDimY - 1, x: grid.virtualDimX - 1}, grid: &grid}
+	grid := Grid{
+		grid:        costGrid,
+		dimX:        len(costGrid[0]),
+		dimY:        len(costGrid),
+		virtualDimX: len(costGrid[0]) * mx,
+		virtualDimY: len(costGrid) * my,
+	}
+	start := Tile{
+		position: Pos{0, 0},
+		grid:     &grid,
+	}
+	end := Tile{
+		position: Pos{y: grid.virtualDimY - 1, x: grid.virtualDimX - 1},
+		grid:     &grid,
+	}
 
 	tileMap[Pos{0, 0}] = &start
 	tileMap[Pos{y: grid.virtualDimY - 1, x: grid.virtualDimX - 1}] = &end
