@@ -48,3 +48,49 @@ func Find(haystack []string, compare func(needle string) bool) (string, error) {
 	}
 	return "", errors.New("nothing found with comparator")
 }
+
+func Permutations[T any](slice []T) [][]T {
+	var helper func([]T, int)
+	permutations := [][]T{}
+
+	helper = func(arr []T, n int) {
+		if n == 1 {
+			tmp := make([]T, len(arr))
+			copy(tmp, arr)
+			permutations = append(permutations, tmp)
+		} else {
+			for i := 0; i < n; i++ {
+				helper(arr, n-1)
+				if n%2 == 1 {
+					arr[i], arr[n-1] = arr[n-1], arr[i]
+				} else {
+					arr[0], arr[n-1] = arr[n-1], arr[0]
+				}
+			}
+		}
+	}
+
+	helper(slice, len(slice))
+	return permutations
+}
+
+func Intersection[T comparable](slices ...[]T) []T {
+	intersect := []T{}
+	intersect = append(intersect, slices[0]...)
+
+	for i := 1; i < len(slices); i++ {
+		partial := []T{}
+
+		for _, item1 := range intersect {
+			for _, item2 := range slices[i] {
+				if item1 == item2 {
+					partial = append(partial, item1)
+				}
+			}
+		}
+
+		intersect = partial
+	}
+
+	return intersect
+}
