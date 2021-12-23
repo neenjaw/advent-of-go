@@ -22,6 +22,8 @@ type Pair struct {
 	occurs uint64
 }
 
+// roll3 returns a list of Pair, one for each sum of the 3 dice, and how many
+// permutations can arrive at that sum
 func (q QuantileDice) roll3() []Pair {
 	return []Pair{
 		{3, 1}, // 111
