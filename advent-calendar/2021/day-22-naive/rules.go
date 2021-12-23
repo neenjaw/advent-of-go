@@ -8,7 +8,8 @@ import (
 )
 
 type Cuboid struct {
-	z0, z1, y0, y1, x0, x1 int
+	z1, z2, y1, y2, x1, x2 int
+	subtractions           map[Position]bool
 }
 
 type State int
@@ -31,7 +32,7 @@ func ParseCuboidSteps(input string) []Rule {
 		state := parseState(parts[0])
 
 		coords := strings.SplitN(parts[1], ",", 3)
-		var x0, x1, y0, y1, z0, z1 int
+		var x1, x2, y1, y2, z1, z2 int
 		for _, coord := range coords {
 			components := strings.SplitN(coord, "=", 2)
 			domain := strings.SplitN(components[1], "..", 2)
@@ -44,26 +45,27 @@ func ParseCuboidSteps(input string) []Rule {
 
 			switch components[0] {
 			case "x":
-				x0 = d1
-				x1 = d2
+				x1 = d1
+				x2 = d2
 			case "y":
-				y0 = d1
-				y1 = d2
+				y1 = d1
+				y2 = d2
 			case "z":
-				z0 = d1
-				z1 = d2
+				z1 = d1
+				z2 = d2
 			}
 		}
 
 		rule := Rule{
 			state: state,
 			cuboid: Cuboid{
-				x0: x0,
-				x1: x1,
-				y0: y0,
-				y1: y1,
-				z0: z0,
-				z1: z1,
+				x1:           x1,
+				x2:           x2,
+				y1:           y1,
+				y2:           y2,
+				z1:           z1,
+				z2:           z2,
+				subtractions: make(map[Position]bool),
 			},
 		}
 		parsed = append(parsed, rule)
