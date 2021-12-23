@@ -11,3 +11,17 @@ func Abs[T number](value T) T {
 	}
 	return value
 }
+
+func Min[T number](a, b T) T {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func Max[T number](a, b T) T {
+	if a > b {
+		return a
+	}
+	return b
+}
